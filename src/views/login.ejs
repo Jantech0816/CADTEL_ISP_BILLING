@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login - CADTEL DATA NETSERV</title><link rel="stylesheet" href="/style.css">
+</head>
+<body class="login-body">
+<div class="login-card">
+  <div class="brand-mark">CN</div>
+  <h1>CADTEL DATA NETSERV</h1>
+  <p class="muted">Centralized ISP Billing System</p>
+  <% if (flash) { %><div class="alert <%= flash.type %>"><%= flash.message %></div><% } %>
+  <form method="post" action="/login" class="stack">
+    <input type="hidden" name="csrf" value="<%= csrfToken %>">
+    <label>Email<input type="email" name="email" required autofocus></label>
+    <label>Password<input type="password" name="password" required></label>
+    <button class="btn primary">Sign In</button>
+  </form>
+</div>
+</body>
+</html>

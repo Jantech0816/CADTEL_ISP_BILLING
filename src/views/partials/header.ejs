@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title><%= title %> - <%= appName %></title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside class="sidebar no-print">
+  <div class="side-brand">
+    <div class="brand-mark">CN</div>
+    <div><strong>CADTEL</strong><span>DATA NETSERV</span></div>
+  </div>
+  <nav>
+    <a href="/">Dashboard</a>
+    <a href="/customers">Subscribers</a>
+    <a href="/plans">Internet Plans</a>
+    <a href="/invoices">Billing / Invoices</a>
+    <a href="/payments">Payments</a>
+    <% if (user && user.role === 'admin') { %>
+      <a href="/users">Users & Roles</a>
+      <a href="/audit">Audit Trail</a>
+    <% } %>
+  </nav>
+  <form method="post" action="/logout" class="logout-form">
+    <input type="hidden" name="csrf" value="<%= csrfToken %>">
+    <button class="nav-logout">Logout</button>
+  </form>
+</aside>
+<main class="main">
+<header class="topbar no-print">
+  <div><h1><%= title %></h1><p>Centralized ISP Billing Management</p></div>
+  <% if (user) { %><div class="user-chip"><%= user.full_name %> · <%= user.role %></div><% } %>
+</header>
+<% if (flash) { %><div class="alert <%= flash.type %>"><%= flash.message %></div><% } %>

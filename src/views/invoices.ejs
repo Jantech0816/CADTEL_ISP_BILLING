@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+<div class="grid-2">
+<div class="card">
+<h2>Generate Single Invoice</h2>
+<form method="post" action="/invoices/generate" class="form-grid">
+<input type="hidden" name="csrf" value="<%= csrfToken %>">
+<label class="span-2">Subscriber<select name="customer_id" required><option value="">Select subscriber</option>
+<% customers.forEach(c=>{ %><option value="<%= c.id %>"><%= c.account_no %> - <%= c.full_name %> - <%= c.plan_name %></option><% }) %>
+</select></label>
+<label>Billing Month<input type="month" name="billing_month" required value="<%= new Date().toISOString().slice(0,7) %>"></label>
+<div class="actions align-end"><button class="btn primary">Generate Invoice</button></div>
+</form>
+</div>
+<div class="card">
+<h2>Bulk Monthly Billing</h2>
+<p class="muted">Generate bills for every active subscriber without an invoice for the selected month.</p>
+<form method="post" action="/invoices/generate-all" class="form-grid">
+<input type="hidden" name="csrf" value="<%= csrfToken %>">
+<label>Billing Month<input type="month" name="billing_month" required value="<%= new Date().toISOString().slice(0,7) %>"></label>
+<div class="actions align-end"><button class="btn primary">Generate All Active</button></div>
+</form>
+</div>
+</div>
+
+<div class="card">
+<div class="section-head"><h2>Invoice Register</h2><div class="filters"><a class="btn small" href="/invoices">All</a><a class="btn small" href="/invoices?status=unpaid">Unpaid</a><a class="btn small" href="/invoices?status=overdue">Overdue</a><a class="btn small" href="/invoices?status=paid">Paid</a></div></div>
+<div class="table-wrap"><table>
+<thead><tr><th>Invoice</th><th>Subscriber</th><th>Month</th><th>Due</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead>
+<tbody>
+<% if(!invoices.length){ %><tr><td colspan="9" class="empty">No invoices found.</td></tr><% } %>
+<% invoices.forEach(i=>{ const s=invoiceStatus(i); %>
+<tr><td><%= i.invoice_no %></td><td><%= i.account_no %> - <%= i.full_name %></td><td><%= i.billing_month %></td><td><%= String(i.due_date).slice(0,10) %></td><td><%= peso(i.total_due) %></td><td><%= peso(i.amount_paid) %></td><td><%= peso(i.balance) %></td><td><span class="badge <%= s.toLowerCase() %>"><%= s %></span></td><td><a class="btn small" target="_blank" href="/invoices/<%= i.id %>/print">Print</a></td></tr>
+<% }) %>
+</tbody></table></div>
+</div>
+<%- include('partials/footer') %>

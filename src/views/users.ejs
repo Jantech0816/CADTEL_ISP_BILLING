@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+<div class="card">
+<h2>Create User</h2>
+<form method="post" action="/users/create" class="form-grid three">
+<input type="hidden" name="csrf" value="<%= csrfToken %>">
+<label>Full Name<input name="full_name" required></label>
+<label>Email<input type="email" name="email" required></label>
+<label>Role<select name="role"><option value="cashier">Cashier</option><option value="collector">Collector</option><option value="admin">Admin</option></select></label>
+<label>Password<input type="password" name="password" minlength="8" required></label>
+<div class="span-2 actions align-end"><button class="btn primary">Create User</button></div>
+</form>
+</div>
+
+<div class="card">
+<h2>User Accounts</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+<tbody>
+<% users.forEach(u=>{ %><tr><td><%= u.full_name %></td><td><%= u.email %></td><td><%= u.role %></td><td><span class="badge <%= u.active?'paid':'unpaid' %>"><%= u.active?'Active':'Disabled' %></span></td><td><%= new Date(u.created_at).toLocaleString() %></td><td class="actions">
+<form method="post" action="/users/<%= u.id %>/toggle" class="inline"><input type="hidden" name="csrf" value="<%= csrfToken %>"><button class="btn small"><%= u.active?'Disable':'Enable' %></button></form>
+<form method="post" action="/users/<%= u.id %>/password" class="inline" onsubmit="return confirm('Reset password for this user?')"><input type="hidden" name="csrf" value="<%= csrfToken %>"><input class="mini-input" type="password" name="password" minlength="8" required placeholder="New password"><button class="btn small">Reset</button></form>
+</td></tr><% }) %>
+</tbody></table></div>
+</div>
+<%- include('partials/footer') %>

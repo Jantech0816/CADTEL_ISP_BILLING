@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title><%= invoice.invoice_no %></title><link rel="stylesheet" href="/style.css"></head>
+<body class="print-page">
+<div class="receipt printable">
+<div class="receipt-head"><h1>CADTEL DATA NETSERV</h1><p>Internet Service Billing Statement</p></div><hr>
+<div class="receipt-row"><b>Invoice No.</b><span><%= invoice.invoice_no %></span></div>
+<div class="receipt-row"><b>Account No.</b><span><%= invoice.account_no %></span></div>
+<div class="receipt-row"><b>Subscriber</b><span><%= invoice.full_name %></span></div>
+<div class="receipt-row"><b>Billing Month</b><span><%= invoice.billing_month %></span></div>
+<div class="receipt-row"><b>Due Date</b><span><%= String(invoice.due_date).slice(0,10) %></span></div><hr>
+<div class="receipt-row"><span><%= invoice.plan_name || 'Internet Plan' %></span><span><%= peso(invoice.amount) %></span></div>
+<div class="receipt-row"><span>Previous Balance</span><span><%= peso(invoice.previous_balance) %></span></div>
+<div class="receipt-row"><span>Adjustments</span><span><%= peso(invoice.adjustments) %></span></div>
+<div class="receipt-row"><b>Total Due</b><b><%= peso(invoice.total_due) %></b></div>
+<div class="receipt-row"><span>Amount Paid</span><span><%= peso(invoice.amount_paid) %></span></div>
+<div class="receipt-row"><b>Balance</b><b><%= peso(invoice.balance) %></b></div><hr>
+<p class="center">Thank you for choosing CADTEL DATA NETSERV.</p>
+<div class="no-print actions"><button class="btn primary" onclick="window.print()">Print</button></div>
+</div></body></html>

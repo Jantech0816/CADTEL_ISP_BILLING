@@ -1,0 +1,35 @@
+<%- include('partials/header') %>
+<div class="cards">
+  <div class="card stat"><span>Total Subscribers</span><strong><%= stats.total %></strong></div>
+  <div class="card stat"><span>Active Subscribers</span><strong><%= stats.active %></strong></div>
+  <div class="card stat"><span>Monthly Recurring Revenue</span><strong><%= peso(stats.monthly) %></strong></div>
+  <div class="card stat"><span>Outstanding Receivables</span><strong><%= peso(stats.receivables) %></strong></div>
+  <div class="card stat danger-lite"><span>Overdue Invoices</span><strong><%= stats.overdue %></strong></div>
+</div>
+
+<div class="card">
+  <div class="section-head"><h2>Recent Invoices</h2><a class="btn" href="/invoices">View Billing</a></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Invoice</th><th>Account</th><th>Subscriber</th><th>Due</th><th>Total</th><th>Balance</th><th>Status</th></tr></thead>
+    <tbody>
+    <% if (!recentInvoices.length) { %><tr><td colspan="7" class="empty">No invoices yet.</td></tr><% } %>
+    <% recentInvoices.forEach(i => { const s=invoiceStatus(i); %>
+      <tr><td><%= i.invoice_no %></td><td><%= i.account_no %></td><td><%= i.full_name %></td><td><%= String(i.due_date).slice(0,10) %></td><td><%= peso(i.total_due) %></td><td><%= peso(i.balance) %></td><td><span class="badge <%= s.toLowerCase() %>"><%= s %></span></td></tr>
+    <% }) %>
+    </tbody>
+  </table></div>
+</div>
+
+<div class="card">
+  <div class="section-head"><h2>Recent Payments</h2><a class="btn" href="/payments">View Payments</a></div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Date</th><th>Receipt</th><th>Subscriber</th><th>Amount</th><th>Method</th><th>Received By</th></tr></thead>
+    <tbody>
+    <% if (!recentPayments.length) { %><tr><td colspan="6" class="empty">No payments yet.</td></tr><% } %>
+    <% recentPayments.forEach(p => { %>
+      <tr><td><%= String(p.payment_date).slice(0,10) %></td><td><%= p.receipt_no %></td><td><%= p.account_no %> - <%= p.full_name %></td><td><%= peso(p.amount) %></td><td><%= p.method %></td><td><%= p.received_by_name || '' %></td></tr>
+    <% }) %>
+    </tbody>
+  </table></div>
+</div>
+<%- include('partials/footer') %>

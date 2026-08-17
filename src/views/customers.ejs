@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+<div class="card">
+<h2><%= edit ? 'Edit Subscriber' : 'Add Subscriber' %></h2>
+<form method="post" action="/customers/save" class="form-grid three">
+<input type="hidden" name="csrf" value="<%= csrfToken %>">
+<input type="hidden" name="id" value="<%= edit ? edit.id : '' %>">
+<label>Account No.<input name="account_no" required placeholder="CAD-00001" value="<%= edit ? edit.account_no : '' %>"></label>
+<label>Subscriber Name<input name="full_name" required value="<%= edit ? edit.full_name : '' %>"></label>
+<label>Contact No.<input name="contact_no" value="<%= edit ? edit.contact_no || '' : '' %>"></label>
+<label>Email<input type="email" name="email" value="<%= edit ? edit.email || '' : '' %>"></label>
+<label>Internet Plan<select name="plan_id"><option value="">Select plan</option>
+<% plans.forEach(p=>{ %><option value="<%= p.id %>" <%= edit && Number(edit.plan_id)===Number(p.id)?'selected':'' %>><%= p.plan_name %> - <%= peso(p.monthly_fee) %></option><% }) %>
+</select></label>
+<label>Billing Day<input type="number" min="1" max="28" name="billing_day" value="<%= edit ? edit.billing_day : 1 %>"></label>
+<label>Installation Date<input type="date" name="installation_date" value="<%= edit && edit.installation_date ? String(edit.installation_date).slice(0,10) : '' %>"></label>
+<label>Status<select name="status"><% ['Active','Suspended','Disconnected'].forEach(s=>{ %><option <%= edit && edit.status===s?'selected':'' %>><%= s %></option><% }) %></select></label>
+<label class="span-3">Address<textarea name="address"><%= edit ? edit.address || '' : '' %></textarea></label>
+<label class="span-3">Notes<textarea name="notes"><%= edit ? edit.notes || '' : '' %></textarea></label>
+<div class="span-3 actions"><button class="btn primary">Save Subscriber</button><% if(edit){ %><a class="btn" href="/customers">Cancel</a><% } %></div>
+</form>
+</div>
+
+<div class="card">
+<div class="section-head"><h2>Subscriber List</h2><form class="search"><input name="q" value="<%= q %>" placeholder="Search name, account, contact"><button class="btn">Search</button></form></div>
+<div class="table-wrap"><table>
+<thead><tr><th>Account</th><th>Name</th><th>Plan</th><th>Monthly</th><th>Bill Day</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody>
+<% if(!customers.length){ %><tr><td colspan="7" class="empty">No subscribers found.</td></tr><% } %>
+<% customers.forEach(c=>{ %>
+<tr>
+<td><%= c.account_no %></td><td><%= c.full_name %></td><td><%= c.plan_name || 'No plan' %></td><td><%= peso(c.monthly_fee||0) %></td><td><%= c.billing_day %></td>
+<td><span class="badge <%= c.status.toLowerCase() %>"><%= c.status %></span></td>
+<td class="actions">
+<a class="btn small" href="/customers/<%= c.id %>/edit">Edit</a>
+<form method="post" action="/customers/<%= c.id %>/status" class="inline">
+<input type="hidden" name="csrf" value="<%= csrfToken %>">
+<select name="status" onchange="this.form.submit()"><option value="">Change...</option><option>Active</option><option>Suspended</option><option>Disconnected</option></select>
+</form>
+<% if(user.role==='admin'){ %>
+<form method="post" action="/customers/<%= c.id %>/delete" class="inline" onsubmit="return confirm('Delete this subscriber and related records?')">
+<input type="hidden" name="csrf" value="<%= csrfToken %>"><button class="btn small danger">Delete</button>
+</form>
+<% } %>
+</td></tr>
+<% }) %>
+</tbody></table></div>
+</div>
+<%- include('partials/footer') %>

@@ -1,0 +1,27 @@
+<%- include('partials/header') %>
+<div class="grid-2">
+<% if(user.role==='admin'){ %>
+<div class="card">
+<h2><%= edit ? 'Edit Plan' : 'Add Plan' %></h2>
+<form method="post" action="/plans/save" class="form-grid">
+<input type="hidden" name="csrf" value="<%= csrfToken %>"><input type="hidden" name="id" value="<%= edit?edit.id:'' %>">
+<label>Plan Name<input name="plan_name" required value="<%= edit?edit.plan_name:'' %>"></label>
+<label>Speed (Mbps)<input type="number" min="1" name="speed_mbps" required value="<%= edit?edit.speed_mbps:'' %>"></label>
+<label>Monthly Fee<input type="number" min="0" step="0.01" name="monthly_fee" required value="<%= edit?edit.monthly_fee:'' %>"></label>
+<label>Description<input name="description" value="<%= edit?edit.description||'':'' %>"></label>
+<div class="span-2 actions"><button class="btn primary">Save Plan</button><% if(edit){ %><a class="btn" href="/plans">Cancel</a><% } %></div>
+</form>
+</div>
+<% } %>
+
+<div class="card">
+<h2>Available Plans</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Plan</th><th>Speed</th><th>Fee</th><th>Status</th><th></th></tr></thead>
+<tbody>
+<% plans.forEach(p=>{ %><tr><td><%= p.plan_name %></td><td><%= p.speed_mbps %> Mbps</td><td><%= peso(p.monthly_fee) %></td><td><span class="badge <%= p.active?'paid':'unpaid' %>"><%= p.active?'Active':'Inactive' %></span></td>
+<td class="actions"><% if(user.role==='admin'){ %><a class="btn small" href="/plans/<%= p.id %>/edit">Edit</a><form method="post" action="/plans/<%= p.id %>/toggle" class="inline"><input type="hidden" name="csrf" value="<%= csrfToken %>"><button class="btn small"><%= p.active?'Disable':'Enable' %></button></form><% } %></td></tr><% }) %>
+</tbody></table></div>
+</div>
+</div>
+<%- include('partials/footer') %>
